@@ -26,9 +26,10 @@ th.mat-sort-header-sorted {
 }
 
 .example-container {
-  margin-top: 10px;
-  max-height: 300px;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 300px;
 }
 
 @media only screen and (max-height: 500px) {
@@ -51,5 +52,36 @@ th.mat-sort-header-sorted {
 
 th {
   vertical-align: middle;
+  background-color: beige;
+  font-size: medium;
 }
 
+::ng-deep.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: orange;
+}
+
+::ng-deep.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: beige;
+}
+
+.mobile-label {
+  display: none;
+}
+
+@media(max-width: 600px) {
+  .mobile-label {
+    width: 80px;
+    display: inline-block;
+    font-weight: bold;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row {
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+}

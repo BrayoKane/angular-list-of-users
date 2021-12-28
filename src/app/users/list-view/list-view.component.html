@@ -6,7 +6,7 @@
         List of Users
       </div>
       <div fxFlex="" fxLayoutAlign="end center">
-        <button [matMenuTriggerFor]="menu" mat-button style="background-color: beige">Export
+        <button [matMenuTriggerFor]="menu" mat-raised-button style="background-color: beige">Export
           <mat-icon>expand_more</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -17,24 +17,25 @@
       </div>
     </div>
     <mat-card-content>
+      <div>
+        <mat-form-field *ngFor="let filter of filterSelectObj" style="margin-left: 15px;">
+          <mat-label>Filter {{filter.name}}</mat-label>
+          <select (change)="filterChange(filter,$event)" [(ngModel)]="filter.modelValue" matNativeControl
+                  name="{{filter.columnProp}}">
+            <option value="">-- Select {{filter.name}} --</option>
+            <option *ngFor="let item of filter.options" [value]="item">{{item}}</option>
+          </select>
+        </mat-form-field>
+        &nbsp;
+        <button (click)="resetFilters()" color="warn" mat-flat-button>Reset</button>
+      </div>
 
       <div fxFlex="" fxLayoutAlign="end">
         <div fxLayout="column">
           <div fxFlex="">
-            <label for=""></label>
-          </div>
-          <div fxFlex="">
-            <mat-form-field appearance="outline">
-              <input #searchInput class="filter" matInput placeholder="Search by Nationality">
-              <button mat-button mat-icon-button matPrefix>
-                <mat-icon matPrefix>search</mat-icon>
-              </button>
-            </mat-form-field>
-          </div>
-          <div fxFlex="">
-            <button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="mainMenuButton"
-                    class="btn btn-sm btn-primary top-margin"
-                    style="float:right">
+            <button [matMenuTriggerFor]="mainMenuButton" class="btn btn-sm btn-primary top-margin"
+                    mat-raised-button
+                    style="float:right; margin-top: 10%;background-color: #FF7F50">
               add/remove
             </button>
             <mat-menu #mainMenuButton="matMenu">
@@ -56,83 +57,105 @@
 
           <!-- Number Column -->
           <ng-container matColumnDef="id">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by number">
               No.
-            </th>
+            </mat-header-cell>
 
-            <td *matCellDef="let row; let i = index;" mat-cell> {{i + 1}} </td>
-            <td *matCellDef="let row" mat-cell> {{row?.id}} </td>
+            <mat-cell *matCellDef="let row; let i = index;">
+              <span class="mobile-label">No.:</span>
+              {{i + 1}}
+            </mat-cell>
           </ng-container>
 
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name">
               Name
-            </th>
-            <td *matCellDef="let row"
-                mat-cell> {{row?.name?.title + ' ' + row?.name?.first + ' ' + row?.name?.last }}</td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row"
+                      mat-cell><span class="mobile-label">Name:</span>
+              {{row?.name?.title + ' ' + row?.name?.first + ' ' + row?.name?.last }}</mat-cell>
           </ng-container>
 
           <!-- Gender Column -->
           <ng-container matColumnDef="gender">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by gender">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by gender">
               Gender
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.gender}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Gender:</span>
+              {{row?.gender}} </mat-cell>
           </ng-container>
 
           <!-- Location Column -->
           <ng-container matColumnDef="location">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by location">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by location">
               Location
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.location?.city}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Location:</span>
+              {{row?.location?.city}} </mat-cell>
+          </ng-container>
+
+          <!-- Nationality Column -->
+          <ng-container matColumnDef="nat">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row"></mat-cell>
           </ng-container>
 
           <!-- Email Column -->
           <ng-container matColumnDef="email">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by email">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by email">
               Email
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.email}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Email:</span>
+              {{row?.email}} </mat-cell>
           </ng-container>
 
           <!-- Current Age Column -->
           <ng-container matColumnDef="age">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by current age">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by current age">
               Current Age
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.dob?.age}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Current Age:</span>
+              {{row?.dob?.age}} </mat-cell>
           </ng-container>
 
           <!-- Registration Seniority Column -->
           <ng-container matColumnDef="registered">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by registered date">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by registered date">
               Registration Seniority
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.registered?.age}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Registration Seniority:</span>
+              {{row?.registered?.age}} </mat-cell>
           </ng-container>
 
           <!-- Phone Number Column -->
           <ng-container matColumnDef="phone">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by phone">
+            <mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by phone">
               Phone
-            </th>
-            <td *matCellDef="let row" mat-cell> {{row?.phone}} </td>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Phone:</span>
+              {{row?.phone}} </mat-cell>
           </ng-container>
 
           <!-- Picture Column -->
           <ng-container matColumnDef="picture">
-            <th *matHeaderCellDef mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>
               Picture
-            </th>
-            <td *matCellDef="let row" mat-cell>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="mobile-label">Picture:</span>
               <img [src]="row?.picture?.thumbnail" alt="pic" style="border-radius: 100%">
-            </td>
+            </mat-cell>
           </ng-container>
 
-          <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-          <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
       </div>
       <mat-card *ngIf="isLoading" class="mat-table-loader">

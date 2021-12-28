@@ -1,10 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
-import {MatSort, Sort} from "@angular/material/sort";
+import {MatSort} from "@angular/material/sort";
 import {UsersService} from "../services/users.service";
-import {debounceTime, distinctUntilChanged, filter, fromEvent} from "rxjs";
-import {map} from "rxjs/operators";
-import {ICustomColumn, IUser} from "../interfaces/User";
+import {ICustomColumn, IFilterObj, IUser} from "../interfaces/User";
 
 @Component({
   selector: 'app-list-view',
@@ -24,33 +22,30 @@ export class ListViewComponent implements OnInit {
   @ViewChild('searchInput', {static: true}) searchInput: ElementRef<HTMLInputElement> = {} as ElementRef<HTMLInputElement>;
   isLoading!: boolean;
   items!: string[];
+  filterSelectObj: IFilterObj[] = [];
+  filterValues = {};
 
   constructor(private _usersService: UsersService) {
+    // Object to create Filter for
+    this.filterSelectObj = [
+      {
+        name: 'GENDER',
+        columnProp: 'gender',
+        options: []
+      }, {
+        name: 'NATIONALITY',
+        columnProp: 'nat',
+        options: []
+      }
+    ]
   }
 
   ngOnInit(): void {
     this.initializeColumnProperties();
-    fromEvent(this.searchInput.nativeElement, 'keyup')
-      .pipe(
-        // get value
-        map((event: any) => {
-          return event.target.value;
-        }),
-        // if character length greater then 2
-        filter(res => res.length > 1),
-
-        // Time in milliseconds between key events
-        debounceTime(3000),
-
-        // If previous query is different from current
-        distinctUntilChanged()
-
-        // subscription for response
-      ).subscribe((search: string) => {
-      this.fetchItems(search);
-    });
 
     this.populateTable();
+    // Override default filter behaviour of Material Datatable
+    this.dataSource.filterPredicate = this.createFilter();
   }
 
   ngAfterViewInit() {
@@ -63,22 +58,13 @@ export class ListViewComponent implements OnInit {
       this.isLoading = false;
       this.userData = res['results']
       this.dataSource.data = this.userData;
+
+      this.filterSelectObj.filter((o: any) => {
+        o['options'] = this.getFilterObject(this.userData, o.columnProp);
+      });
     }, (err: any) => {
       console.log(err);
     });
-  }
-
-  private fetchItems(searchInput: string) {
-    this.isLoading = true;
-    this._usersService.queryNationality(searchInput).subscribe((res: any) => {
-        this.userData = res['results']
-        this.dataSource.data = this.userData;
-        this.isLoading = false;
-      },
-      (err: any) => {
-        console.log(err);
-        this.isLoading = false;
-      })
   }
 
   exportToCSV() {
@@ -87,6 +73,17 @@ export class ListViewComponent implements OnInit {
 
   exportToXML() {
 
+  }
+
+  // Get Unique values from columns to build filter
+  getFilterObject(fullObj: any[], key: string) {
+    const uniqChk: string[] = [];
+    let uniqueVals: string[] = [];
+    fullObj.filter((obj: { [x: string]: any; }) => {
+      uniqChk.push(obj[key])
+      uniqueVals = [...new Set(uniqChk)];
+    });
+    return uniqueVals;
   }
 
   toggleColumn(column: { isActive: boolean; position: number; name: string; }) {
@@ -120,6 +117,58 @@ export class ListViewComponent implements OnInit {
     const limit = tableScrollHeight - tableViewHeight - buffer;
     if (scrollLocation > limit) {
       this.dataSource.data = this.dataSource.data.concat(this.userData);
+    }
+  }
+
+  // Reset table filters
+  resetFilters() {
+    this.filterValues = {}
+    this.filterSelectObj.forEach((value, key) => {
+      // @ts-ignore
+      value.modelValue = undefined;
+    })
+    this.dataSource.filter = "";
+  }
+
+  // Called on Filter change
+  filterChange(filter: any, $event: any) {
+    // let filterValues = {}
+    // @ts-ignore
+    this.filterValues[filter.columnProp] = $event.target.value.trim().toLowerCase()
+    this.dataSource.filter = JSON.stringify(this.filterValues)
+  }
+
+  // Custom filter method fot Angular Material Datatable
+  createFilter() {
+    return function (data: any, filter: string): boolean {
+      let searchTerms = JSON.parse(filter);
+      let isFilterSet = false;
+      for (const col in searchTerms) {
+        if (searchTerms[col].toString() !== '') {
+          isFilterSet = true;
+        } else {
+          delete searchTerms[col];
+        }
+      }
+
+      console.log(searchTerms);
+
+      let nameSearch = () => {
+        let found = false;
+        if (isFilterSet) {
+          for (const col in searchTerms) {
+            searchTerms[col].trim().toLowerCase().split(' ').forEach((word: string) => {
+              if (data[col].toString().toLowerCase().indexOf(word) != -1 && isFilterSet) {
+                found = true
+              }
+            });
+          }
+          return found
+        } else {
+          return true;
+        }
+      }
+      return nameSearch()
     }
   }
 }

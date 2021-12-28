@@ -42,3 +42,10 @@ export interface ICustomColumn {
   name: string;
   isActive: boolean;
 }
+
+export interface IFilterObj {
+  modelValue?: any;
+  name: string,
+  columnProp: string,
+  options: []
+}
