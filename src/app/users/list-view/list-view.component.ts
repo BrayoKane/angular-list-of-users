@@ -3,6 +3,8 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {UsersService} from "../services/users.service";
 import {ICustomColumn, IFilterObj, IUser} from "../interfaces/User";
+import * as JsonToXML from "js2xmlparser";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-list-view',
@@ -24,8 +26,10 @@ export class ListViewComponent implements OnInit {
   items!: string[];
   filterSelectObj: IFilterObj[] = [];
   filterValues = {};
+  userXML!: string;
+  fileUrl!: SafeResourceUrl;
 
-  constructor(private _usersService: UsersService) {
+  constructor(private _usersService: UsersService, private sanitizer: DomSanitizer) {
     // Object to create Filter for
     this.filterSelectObj = [
       {
@@ -59,6 +63,8 @@ export class ListViewComponent implements OnInit {
       this.userData = res['results']
       this.dataSource.data = this.userData;
 
+      this.userXML = JsonToXML.parse("user", res);
+
       this.filterSelectObj.filter((o: any) => {
         o['options'] = this.getFilterObject(this.userData, o.columnProp);
       });
@@ -67,12 +73,9 @@ export class ListViewComponent implements OnInit {
     });
   }
 
-  exportToCSV() {
-
-  }
-
   exportToXML() {
-
+    const fileToExport = new Blob([this.userXML], {type: "text/xml"});
+    this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(fileToExport));
   }
 
   // Get Unique values from columns to build filter
