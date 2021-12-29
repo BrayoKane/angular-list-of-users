@@ -20,17 +20,17 @@
       <div>
         <mat-form-field *ngFor="let filter of filterSelectObj" style="margin-left: 15px;">
           <mat-label>Filter {{filter.name}}</mat-label>
-          <select (change)="filterChange(filter,$event)" [(ngModel)]="filter.modelValue" matNativeControl
-                  name="{{filter.columnProp}}" id="select-filter-btn">
+          <select (change)="filterChange(filter,$event)" [(ngModel)]="filter.modelValue" id="select-filter-btn"
+                  matNativeControl name="{{filter.columnProp}}">
             <option value="">-- Select {{filter.name}} --</option>
             <option *ngFor="let item of filter.options" [value]="item">{{item}}</option>
           </select>
         </mat-form-field>
         &nbsp;
-        <button id="resetFilterBtn" (click)="resetFilters()" color="warn" mat-flat-button>Reset</button>
+        <button (click)="resetFilters()" color="warn" id="resetFilterBtn" mat-flat-button>Reset</button>
       </div>
 
-      <div fxFlex="" fxLayoutAlign="end">
+      <div>
         <div fxLayout="column">
           <div fxFlex="">
             <button [matMenuTriggerFor]="mainMenuButton" class="add-remove-btn"
@@ -52,8 +52,8 @@
 
     <mat-card-content>
       <div class="example-container mat-elevation-z8">
-        <mat-table #exporter="matTableExporter" (scroll)="onTableScroll($event)" [dataSource]="dataSource" matSort
-                   matTableExporter id="table">
+        <mat-table #exporter="matTableExporter" (scroll)="onTableScroll($event)" [dataSource]="dataSource" id="table"
+                   matSort matTableExporter>
 
           <!-- Number Column -->
           <ng-container matColumnDef="id">

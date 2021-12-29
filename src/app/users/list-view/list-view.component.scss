@@ -1,6 +1,6 @@
 @import "../../shared/styles/theme";
 
-.main-div{
+.main-div {
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -40,6 +40,7 @@ mat-header-cell.mat-sort-header-sorted {
     overflow: auto;
   }
 }
+
 @media only screen and (min-height: 500px) and (max-height: 800px) {
   .example-container {
     max-height: 400px;
@@ -75,8 +76,7 @@ mat-header-cell {
 }
 
 .add-remove-btn {
-  float:right;
-  margin-top: 10%;
+  float: right;
   background-color: $tertiary-color
 }
 
