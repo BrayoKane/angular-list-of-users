@@ -6,7 +6,6 @@ import {ICustomColumn, IFilterObj, IUser} from "../interfaces/User";
 import * as JsonToXML from "js2xmlparser";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {SweetAlertService} from "../../shared/services/sweet-alert.service";
-import {MatMenuTrigger} from "@angular/material/menu";
 
 @Component({
   selector: 'app-list-view',
@@ -148,7 +147,7 @@ export class ListViewComponent implements OnInit {
       let searchTerms = JSON.parse(filter);
       let isFilterSet = false;
       for (const col in searchTerms) {
-        if (searchTerms[col] + '' !== '') {
+        if (searchTerms[col].toString() !== '') {
           isFilterSet = true;
         } else {
           delete searchTerms[col];
@@ -160,7 +159,7 @@ export class ListViewComponent implements OnInit {
         if (isFilterSet) {
           for (const col in searchTerms) {
             searchTerms[col].trim().toLowerCase().split(' ').forEach((word: string) => {
-              if (data[col] + '' .toLowerCase().indexOf(word) != -1 && isFilterSet) {
+              if ((data[col] + '').toLowerCase().indexOf(word) != -1 && isFilterSet) {
                 found = true
               }
             });

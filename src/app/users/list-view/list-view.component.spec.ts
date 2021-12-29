@@ -75,7 +75,7 @@ describe('ListViewComponent', () => {
     let item = {
       gender: 'male',
     }
-    expect(filterFxn(mockData.users.results,  JSON.stringify(item))).toBeTruthy();
+    expect(filterFxn(mockData.users.results,  JSON.stringify(item))).toBeFalsy();
   });
 
   it('should call filterChange() when filtering column items', () => {
