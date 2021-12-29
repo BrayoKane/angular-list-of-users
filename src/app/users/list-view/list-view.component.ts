@@ -5,6 +5,8 @@ import {UsersService} from "../services/users.service";
 import {ICustomColumn, IFilterObj, IUser} from "../interfaces/User";
 import * as JsonToXML from "js2xmlparser";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
+import {SweetAlertService} from "../../shared/services/sweet-alert.service";
+import {MatMenuTrigger} from "@angular/material/menu";
 
 @Component({
   selector: 'app-list-view',
@@ -29,7 +31,8 @@ export class ListViewComponent implements OnInit {
   userXML!: string;
   fileUrl!: SafeResourceUrl;
 
-  constructor(private _usersService: UsersService, private sanitizer: DomSanitizer) {
+  constructor(private _usersService: UsersService, private sanitizer: DomSanitizer,
+              private _sweetAlertService: SweetAlertService) {
     // Object to create Filter for
     this.filterSelectObj = [
       {
@@ -68,8 +71,8 @@ export class ListViewComponent implements OnInit {
       this.filterSelectObj.filter((o: any) => {
         o['options'] = this.getFilterObject(this.userData, o.columnProp);
       });
-    }, (err: any) => {
-      console.log(err);
+    }, (err: Error) => {
+      this._sweetAlertService.showErrorAlert(err.message);
     });
   }
 
@@ -127,7 +130,6 @@ export class ListViewComponent implements OnInit {
   resetFilters() {
     this.filterValues = {}
     this.filterSelectObj.forEach((value, key) => {
-      // @ts-ignore
       value.modelValue = undefined;
     })
     this.dataSource.filter = "";
@@ -135,7 +137,6 @@ export class ListViewComponent implements OnInit {
 
   // Called on Filter change
   filterChange(filter: any, $event: any) {
-    // let filterValues = {}
     // @ts-ignore
     this.filterValues[filter.columnProp] = $event.target.value.trim().toLowerCase()
     this.dataSource.filter = JSON.stringify(this.filterValues)
@@ -147,21 +148,19 @@ export class ListViewComponent implements OnInit {
       let searchTerms = JSON.parse(filter);
       let isFilterSet = false;
       for (const col in searchTerms) {
-        if (searchTerms[col].toString() !== '') {
+        if (searchTerms[col] + '' !== '') {
           isFilterSet = true;
         } else {
           delete searchTerms[col];
         }
       }
 
-      console.log(searchTerms);
-
       let nameSearch = () => {
         let found = false;
         if (isFilterSet) {
           for (const col in searchTerms) {
             searchTerms[col].trim().toLowerCase().split(' ').forEach((word: string) => {
-              if (data[col].toString().toLowerCase().indexOf(word) != -1 && isFilterSet) {
+              if (data[col] + '' .toLowerCase().indexOf(word) != -1 && isFilterSet) {
                 found = true
               }
             });

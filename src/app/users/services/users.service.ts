@@ -9,7 +9,7 @@ export class UsersService {
   baseURI = `https://randomuser.me/api/`;
 
   // Retrieve Name, Gender, Location, Nationality, E-mail, DOB, Registration, Phone No. & Picture info
-  private _getRequiredColumns = this.baseURI + '?inc=name,gender,location,nat,email,dob,registered,phone,picture&results=100';
+  public _getRequiredColumns = this.baseURI + '?inc=name,gender,location,nat,email,dob,registered,phone,picture&results=100';
 
   constructor(private _http: HttpClient) {
   }
