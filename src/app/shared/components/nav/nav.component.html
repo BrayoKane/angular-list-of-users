@@ -1,0 +1,30 @@
+<mat-toolbar color="primary" style="background-color: orange">
+  <mat-toolbar-row>
+    <button mat-icon-button>
+      <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav #sidenav [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false" class="sidenav"
+               fixedInViewport>
+
+    <mat-toolbar style="width: 150px">
+      <div fxLayout="column" fxLayoutAlign="center center" style="width: 100%;">
+        <img class="logo-img" src="../../../../assets/svgs/jumia-logo.svg">
+      </div>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <a mat-list-item [routerLink]="'users'" routerLinkActive="active"> Users </a>
+      <hr style="margin-top: 0"/>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
