@@ -12,4 +12,5 @@ docker-compose*
 README.md
 LICENSE
 .vscode
-# src
+.angular
+dist
